@@ -10,6 +10,8 @@ import pl.messier.enterthedragon.service.model.Price;
 import pl.messier.enterthedragon.service.model.Stock;
 import pl.messier.enterthedragon.service.util.StockDataStore;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -25,14 +27,14 @@ public class FunctionAverageCalculatorTest {
         SingleAverageCalculator single = new SingleAverageCalculator();
         StockDataStore store = new StockDataStore(dataDirPathStr);
         Stock stock = store.getStockByTickerSymbol("CDR");
-        LinkedHashMap<GregorianCalendar, Price> timePrice = stock.getTimePrice();
+        LinkedHashMap<String, Price> timePrice = stock.getTimePrice();
         Interval interval = Interval.M1;
         Integer numOfPayments = 3;
         MomentBuy momentBuy = MomentBuy.OPEN;
 
         // check every day of the week as a start day
         for(int i=0; i!=5; i++) {
-            GregorianCalendar dayStart = new GregorianCalendar(2020, Calendar.FEBRUARY, 3 + i);
+            String dayStart = LocalDate.of(2020, Month.FEBRUARY, 3 + i).format(Config.INTERNAL_DATE_FORMATTER);
             averagesCallables.add(single.calculateAverageSharePrice(timePrice, dayStart, interval, numOfPayments, momentBuy));
         }
         List<Future<Double>> averages = exec.invokeAll(averagesCallables);

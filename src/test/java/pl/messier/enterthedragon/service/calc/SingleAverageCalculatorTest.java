@@ -10,6 +10,8 @@ import pl.messier.enterthedragon.service.model.Price;
 import pl.messier.enterthedragon.service.model.Stock;
 import pl.messier.enterthedragon.service.util.StockDataStore;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
@@ -29,8 +31,8 @@ public class SingleAverageCalculatorTest {
 
         StockDataStore store = new StockDataStore(dataDirPathStr);
         Stock stock = store.getStockByTickerSymbol("CDR");
-        LinkedHashMap<GregorianCalendar, Price> timePrice = stock.getTimePrice();
-        GregorianCalendar dayStart = new GregorianCalendar(2020, Calendar.JANUARY, 3);
+        LinkedHashMap<String, Price> timePrice = stock.getTimePrice();
+        String dayStart = LocalDate.of(2020, Month.JANUARY, 3).format(Config.INTERNAL_DATE_FORMATTER);
         Interval interval = Interval.M1;
         Integer numOfPayments = 3;
         MomentBuy momentBuy = MomentBuy.OPEN;
@@ -46,8 +48,8 @@ public class SingleAverageCalculatorTest {
 
         StockDataStore store = new StockDataStore(dataDirPathStr);
         Stock stock = store.getStockByTickerSymbol("CDR");
-        LinkedHashMap<GregorianCalendar, Price> timePrice = stock.getTimePrice();
-        GregorianCalendar dayStart = new GregorianCalendar(2020, Calendar.JANUARY, 3);
+        LinkedHashMap<String, Price> timePrice = stock.getTimePrice();
+        String dayStart = LocalDate.of(2020, Month.JANUARY, 3).format(Config.INTERNAL_DATE_FORMATTER);
         Interval interval = Interval.W1;
         Integer numOfPayments = 3;
         MomentBuy momentBuy = MomentBuy.OPEN;
@@ -63,8 +65,8 @@ public class SingleAverageCalculatorTest {
 
         StockDataStore store = new StockDataStore(dataDirPathStr);
         Stock stock = store.getStockByTickerSymbol("CDR");
-        LinkedHashMap<GregorianCalendar, Price> timePrice = stock.getTimePrice();
-        GregorianCalendar dayStart = new GregorianCalendar(2020, Calendar.JANUARY, 3);
+        LinkedHashMap<String, Price> timePrice = stock.getTimePrice();
+        String dayStart = LocalDate.of(2020, Month.JANUARY, 3).format(Config.INTERNAL_DATE_FORMATTER);
         Interval interval = Interval.M1;
         Integer numOfPayments = 3;
         MomentBuy momentBuy = MomentBuy.OPEN;
@@ -80,10 +82,10 @@ public class SingleAverageCalculatorTest {
 
         StockDataStore store = new StockDataStore(dataDirPathStr);
         Stock stock = store.getStockByTickerSymbol("CDR");
-        LinkedHashMap<GregorianCalendar, Price> timePrice = stock.getTimePrice();
+        LinkedHashMap<String, Price> timePrice = stock.getTimePrice();
         // no price for this day
         // if the dayStart is without price then throw and exception
-        GregorianCalendar dayStart = new GregorianCalendar(2020, Calendar.JANUARY, 1);
+        String dayStart = LocalDate.of(2020, Month.JANUARY, 1).format(Config.INTERNAL_DATE_FORMATTER);
         Interval interval = Interval.M1;
         Integer numOfPayments = 3;
         MomentBuy momentBuy = MomentBuy.OPEN;
@@ -99,10 +101,10 @@ public class SingleAverageCalculatorTest {
 
         StockDataStore store = new StockDataStore(dataDirPathStr);
         Stock stock = store.getStockByTickerSymbol("CDR");
-        LinkedHashMap<GregorianCalendar, Price> timePrice = stock.getTimePrice();
+        LinkedHashMap<String, Price> timePrice = stock.getTimePrice();
         // there will be Christmas in 2 months
         // if the day without price is in the middle (not the dayStart) then we should take next possible day with price
-        GregorianCalendar dayStart = new GregorianCalendar(2020, Calendar.OCTOBER, 29);
+        String dayStart = LocalDate.of(2020, Month.OCTOBER, 29).format(Config.INTERNAL_DATE_FORMATTER);
         Interval interval = Interval.M1;
         Integer numOfPayments = 3;
         MomentBuy momentBuy = MomentBuy.OPEN;

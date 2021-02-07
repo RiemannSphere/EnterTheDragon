@@ -1,5 +1,6 @@
 package pl.messier.enterthedragon.service.util;
 
+import pl.messier.enterthedragon.service.constances.Config;
 import pl.messier.enterthedragon.service.exceptions.EnterTheDragonException;
 import pl.messier.enterthedragon.service.model.Price;
 import pl.messier.enterthedragon.service.model.Stock;
@@ -9,9 +10,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +23,7 @@ public class StockDataStore {
     private final static Logger log = Logger.getLogger(StockDataStore.class.getName());
     private static String separator = ",";
     private static Integer numberOfColumns = 10;
-    private static DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+    private static DateTimeFormatter dateFormatterFromFile = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     private String dataDirPathStr;
 
@@ -42,7 +44,7 @@ public class StockDataStore {
         try {
             Path stockFilePath = Paths.get(stockFilePathStr);
             Stream<String> lines = Files.lines(stockFilePath);
-            LinkedHashMap<GregorianCalendar, Price> timePriceMap = lines
+            LinkedHashMap<String, Price> timePriceMap = lines
                     .map(StockDataStore::separateLine)
                     .skip(1)
                     .map(StockDataStore::toTimePriceTuple)
@@ -85,11 +87,11 @@ public class StockDataStore {
                     e);
             return TimePrice.empty();
         }
-        GregorianCalendar time = new GregorianCalendar();
+        String time;
         try {
-            Date timeDate = dateFormat.parse(splitLine[2]);
-            time.setTime(timeDate);
-        } catch (ParseException e) {
+            LocalDate timeDate = LocalDate.parse(splitLine[2], dateFormatterFromFile);
+            time = Config.INTERNAL_DATE_FORMATTER.format(timeDate);
+        } catch (DateTimeParseException e) {
             log.log(Level.SEVERE, "Cannot parse date: " + splitLine[2], e);
             return TimePrice.empty();
         }

@@ -3,15 +3,15 @@ package pl.messier.enterthedragon.service.model;
 import java.util.GregorianCalendar;
 
 public final class TimePrice {
-    private GregorianCalendar time;
+    private String time;
     private Price price;
 
-    public TimePrice(GregorianCalendar time, Price price) {
+    public TimePrice(String time, Price price) {
         this.time = time;
         this.price = price;
     }
 
-    public GregorianCalendar getTime() {
+    public String getTime() {
         return time;
     }
 

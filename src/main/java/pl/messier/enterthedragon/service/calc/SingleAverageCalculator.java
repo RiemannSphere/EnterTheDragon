@@ -1,15 +1,15 @@
 package pl.messier.enterthedragon.service.calc;
 
+import pl.messier.enterthedragon.service.constances.Config;
 import pl.messier.enterthedragon.service.constances.Interval;
 import pl.messier.enterthedragon.service.constances.MomentBuy;
 import pl.messier.enterthedragon.service.exceptions.EnterTheDragonException;
 import pl.messier.enterthedragon.service.model.Price;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.LinkedHashMap;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 public class SingleAverageCalculator {
@@ -31,8 +31,8 @@ public class SingleAverageCalculator {
      * @return
      */
     public Callable<Double> calculateAverageSharePrice(
-            LinkedHashMap<GregorianCalendar, Price> timePrice,
-            GregorianCalendar dayStart,
+            LinkedHashMap<String, Price> timePrice,
+            String dayStart,
             Interval interval,
             Integer numOfPayments,
             MomentBuy momentBuy) {
@@ -40,11 +40,7 @@ public class SingleAverageCalculator {
             if(timePrice == null || timePrice.isEmpty() || timePrice.containsKey(null) || timePrice.containsValue(null))
                 throw new EnterTheDragonException("Data is null, empty or contains nulls.");
             if(timePrice.get(dayStart) == null){
-                timePrice.forEach((time, price) -> {
-                    System.out.println(new SimpleDateFormat("yyyy-MM-dd").format(time.getTime()) + ", " + price.getOpen());
-                });
-                String dayStartStr = new SimpleDateFormat("yyyy-MM-dd").format(dayStart.getTime());
-                throw new EnterTheDragonException("There is no price for the date: " + dayStartStr);
+                throw new EnterTheDragonException("There is no price for the date: " + dayStart);
             }
             if(dayStart == null)
                 throw new EnterTheDragonException("Day start is null.");
@@ -55,32 +51,50 @@ public class SingleAverageCalculator {
             if(!Arrays.asList(MomentBuy.values()).contains(momentBuy))
                 throw new EnterTheDragonException("Such moment to buy has not been declared: " + momentBuy);
 
+            LocalDate dayStartDate = LocalDate.parse(dayStart);
             Double priceSum = 0d;
             for(int i=0; i!=numOfPayments; i++) {
-                Price nextBuyPrice = timePrice.get(dayStart);
+                Price nextBuyPrice = timePrice.get(dayStartDate.format(Config.INTERNAL_DATE_FORMATTER));
                 if (nextBuyPrice == null) {
-                    GregorianCalendar nextDayToTry = (GregorianCalendar) dayStart.clone();
+                    LocalDate nextDayToTry = dayStartDate;
                     while (nextBuyPrice == null) {
-                        nextDayToTry.add(Calendar.DAY_OF_MONTH, 1);
-                        nextBuyPrice = timePrice.get(nextDayToTry);
+                        nextDayToTry = nextDayToTry.plusDays(1);
+                        nextBuyPrice = timePrice.get(nextDayToTry.format(Config.INTERNAL_DATE_FORMATTER));
                     }
                 }
                 if(nextBuyPrice == null) {
-                    String dayStartStr = new SimpleDateFormat("yyyy-MM-dd").format(dayStart.getTime());
-                    throw new EnterTheDragonException("There is no price for the date: " + dayStartStr);
+                    throw new EnterTheDragonException("There is no price for the date: " +
+                            dayStartDate.format(Config.INTERNAL_DATE_FORMATTER));
                 }
                 priceSum += nextBuyPrice.get(momentBuy);
                 switch (interval) {
                     // TODO D1 is problematic for now, need to code it later
-                    /*case D1: dayStart.add(Calendar.DAY_OF_MONTH, 1); break;*/
-                    case W1: dayStart.add(Calendar.DAY_OF_MONTH, 7); break;
-                    case W2: dayStart.add(Calendar.DAY_OF_MONTH, 2*7); break;
-                    case M1: dayStart.add(Calendar.DAY_OF_MONTH, 4*7); break;
-                    case M2: dayStart.add(Calendar.DAY_OF_MONTH, 2*4*7); break;
-                    case M3: dayStart.add(Calendar.DAY_OF_MONTH, 3*4*7); break;
-                    case M4: dayStart.add(Calendar.DAY_OF_MONTH, 4*4*7); break;
-                    case M6: dayStart.add(Calendar.DAY_OF_MONTH, 6*4*7); break;
-                    case Y1: dayStart.add(Calendar.DAY_OF_MONTH, 12*4*7); break;
+                    case W1:
+                        dayStartDate = dayStartDate.plusDays(7);
+                        break;
+                    case W2:
+                        dayStartDate = dayStartDate.plusDays(2*7);
+                        break;
+                    case M1:
+                        dayStartDate = dayStartDate.plusDays(4*7);
+                        break;
+                    case M2:
+                        dayStartDate = dayStartDate.plusDays(2*4*7);
+                        break;
+                    case M3:
+                        dayStartDate = dayStartDate.plusDays(3*4*7);
+                        break;
+                    case M4:
+                        dayStartDate = dayStartDate.plusDays(4*4*7);
+                        break;
+                    case M6:
+                        dayStartDate = dayStartDate.plusDays(6*4*7);
+                        break;
+                    case Y1:
+                        dayStartDate = dayStartDate.plusDays(12*4*7);
+                        break;
+                    default:
+                        throw new EnterTheDragonException("Such interval " + interval + " is not defined.");
                 }
             }
             Double average = priceSum / numOfPayments;

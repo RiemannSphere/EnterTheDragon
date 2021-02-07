@@ -3,11 +3,9 @@ package pl.messier.enterthedragon.rest.model;
 import pl.messier.enterthedragon.service.constances.Interval;
 import pl.messier.enterthedragon.service.constances.MomentBuy;
 
-import java.util.GregorianCalendar;
-
 public class SingleAverageRequest {
     private String tickerSymbol;
-    private GregorianCalendar dayStart;
+    private String dayStart;
     private Interval interval;
     private Integer numOfPayments;
     private MomentBuy momentBuy;
@@ -23,11 +21,11 @@ public class SingleAverageRequest {
         this.tickerSymbol = tickerSymbol;
     }
 
-    public GregorianCalendar getDayStart() {
+    public String getDayStart() {
         return dayStart;
     }
 
-    public void setDayStart(GregorianCalendar dayStart) {
+    public void setDayStart(String dayStart) {
         this.dayStart = dayStart;
     }
 

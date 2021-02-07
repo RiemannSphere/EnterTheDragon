@@ -22,7 +22,7 @@ public class SingleAverage {
 
     public Double getAverageSharePrice(
             String tickerSymbol,
-            GregorianCalendar dayStart,
+            String dayStart,
             Interval interval,
             Integer numOfPayments,
             MomentBuy momentBuy) throws EnterTheDragonException {
@@ -30,7 +30,7 @@ public class SingleAverage {
         SingleAverageCalculator single = new SingleAverageCalculator();
         StockDataStore store = new StockDataStore(dataDirPathStr);
         Stock stock = store.getStockByTickerSymbol(tickerSymbol);
-        LinkedHashMap<GregorianCalendar, Price> timePrice = stock.getTimePrice();
+        LinkedHashMap<String, Price> timePrice = stock.getTimePrice();
         Future<Double> average = exec.submit(single.calculateAverageSharePrice(timePrice, dayStart, interval, numOfPayments, momentBuy));
         try {
             return average.get();

@@ -6,9 +6,9 @@ import java.util.LinkedHashMap;
 public class Stock {
 
     private String tickerSymbol;
-    private LinkedHashMap<GregorianCalendar, Price> timePrice;
+    private LinkedHashMap<String, Price> timePrice;
 
-    public Stock(String ticketSymbol, LinkedHashMap<GregorianCalendar, Price> timePrice) {
+    public Stock(String ticketSymbol, LinkedHashMap<String, Price> timePrice) {
         this.tickerSymbol = ticketSymbol;
         this.timePrice = timePrice;
     }
@@ -17,7 +17,7 @@ public class Stock {
         return tickerSymbol;
     }
 
-    public LinkedHashMap<GregorianCalendar, Price> getTimePrice() {
+    public LinkedHashMap<String, Price> getTimePrice() {
         return timePrice;
     }
 }
