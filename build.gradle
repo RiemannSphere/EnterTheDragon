@@ -23,10 +23,6 @@ test {
     useJUnitPlatform()
 }
 
-processResources {
-    dependsOn "buildAngular"
-}
-
 def angularDir = "$projectDir/src/main/angular"
 
 task buildAngular(type: Exec) {

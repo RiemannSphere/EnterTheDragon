@@ -1,1 +1,3 @@
-<p>calc-params works!</p>
+<app-calc-input id="tickerSymbol" class="block"></app-calc-input>
+<app-calc-slider *ngFor="let param of params" id={{param.name}} class="block" [label]="param.label" [min]="param.min"
+    [max]="param.max"></app-calc-slider>

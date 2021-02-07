@@ -1,13 +1,12 @@
 .grid-wrapper {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
 }
 
-@for $i from 1 through 2 {
+@for $i from 1 through 3 {
     .grid-element-#{$i} {
         grid-column: #{$i};
         align-self: center;
         justify-self: center;
-        width: 100%;
     }
 }
